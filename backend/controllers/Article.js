@@ -26,7 +26,7 @@ const Article = {
         }
     },
     async getAllArticles(req, res) {
-        const findAllArticles = 'SELECT * FROM articles';
+        const findAllArticles = 'SELECT * FROM articles returning *';
         try {
             const { rows } = await config.query(findAllArticles);
             return res.status(200).send({ rows });
@@ -36,7 +36,7 @@ const Article = {
     }, 
     
     async getSpecificArticle(req, res) {
-        const getOne = 'SELECT * FROM article WHERE id=$1';
+        const getOne = 'SELECT * FROM article WHERE id=$1 returning *';
         try {
             const { rows } = await db.query(getOne, [req.params.id]);
             if(!rows[0]) {
@@ -45,6 +45,23 @@ const Article = {
                 });
             }
             return res.status(200).send(rows[0]);
+        } catch(error) {
+            return res.status(400).send(error);
+        }
+    },
+
+    async deleteArticle(req, res) {
+        const deleteQuery = 'DELETE FROM article WHERE id=$1 returning *';
+        try {
+            const { rows } = await db.query(deleteQuery, [req.params.id]);
+            if(!rows[0]) {
+                return res.status(404).send({
+                    'message': 'Oops attempt to remove an article that does not exist'
+                });
+            }
+            return res.status(204).send({
+                'message': 'Article deleted'
+            });
         } catch(error) {
             return res.status(400).send(error);
         }
