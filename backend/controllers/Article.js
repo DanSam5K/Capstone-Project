@@ -33,7 +33,22 @@ const Article = {
         } catch(error) {
             return res.status(400).send(error);
         }
-    },     
+    }, 
+    
+    async getSpecificArticle(req, res) {
+        const getOne = 'SELECT * FROM article WHERE id=$1';
+        try {
+            const { rows } = await db.query(getOne, [req.params.id]);
+            if(!rows[0]) {
+                return res.status(404).send({
+                    'message': 'Oops article not found'
+                });
+            }
+            return res.status(200).send(rows[0]);
+        } catch(error) {
+            return res.status(400).send(error);
+        }
+    }
     
 }
 
