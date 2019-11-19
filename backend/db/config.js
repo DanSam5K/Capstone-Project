@@ -89,9 +89,9 @@ const createArticlesTable = () => {
     id UUID PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     gifImg TEXT NOT NULL,
-    employee_id UUID NOT NULL,
+    user_id UUID NOT NULL,
     datePosted timestamp,
-    FOREIGN KEY (employee_id) REFERENCES employees (id) ON DELETE CASCADE
+    FOREIGN KEY (employee_id) REFERENCES users (id) ON DELETE CASCADE
    )`;
    pool.query(queryTxt)
       .then(
@@ -108,7 +108,18 @@ const createArticlesTable = () => {
  }
 
  //**Create Comments table */
-
+const createCommentTable = () => {
+  const queryTxt = 
+  `CREATE TABLE IF NOT EXISTS
+  articleComment(
+    id UUID PRIMARY KEY,
+    comment VARCHAR(255) NOT NULL,
+    article_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    FOREIGN KEY(article_id) REFERENCES article(id), 
+    FOREIGN KEY (user_id) REFEREMCES users(id) ON CASCADE DELETE
+  )`
+}
 
  //**CREATE ALL Tables */
 
@@ -116,6 +127,7 @@ const createArticlesTable = () => {
    createArticlesTable();
    createEmployeeTable();
    createGifTable();
+   createCommentTable();
  }
 
  pool.on('remove', () => {
@@ -128,5 +140,8 @@ module.exports = {
   createArticlesTable,
   createEmployeeTable,
   createGifTable,
-  createAllTables 
+  createAllTables,
+  createCommentTable 
 };
+
+require('make-runnable');

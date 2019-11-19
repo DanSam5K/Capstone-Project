@@ -90,6 +90,35 @@ const Article = {
          } catch(error) {
              return res.status(400).send(error);
          }
+    },
+
+    async commentOnArticle(req, res) {
+        const getOne = 'SELECT * FROM article WHERE id=$1';
+        const commentQuery = `INSERT INTO comment(id, comment,article_id,user_id)
+        VALUES($1,$2,$3,$) returning *`;
+        try {
+            const { rows } = await db.query(getOne, [req.params.id]);
+            if(!rows[0]) {
+                return res.status(404).send({
+                    'message': 'Article not found'
+                });
+            }
+            const values = [
+                uuidv4(),
+                req.body.comment,
+                moment(new Date()),
+                req.article.id,
+                req.user.id
+            ];
+
+            const response = await db.query(commentQuery, values);
+            return res.status(201).send({
+                'message': 'Successfully added comment'
+            });
+        } catch(error) {
+            return res.status(400).send(error);
+        }
+
     }
     
 }
