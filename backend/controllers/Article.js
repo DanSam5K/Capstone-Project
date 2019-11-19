@@ -1,6 +1,6 @@
-import db from '../db/config';
-import uuidv4 from 'uuid/v4';
-import moment from 'moment';
+const database = require('../db/config');
+const uuidv4 = require('uuid/v4');
+const moment = require('moment');
 
 const Article = {
 
@@ -19,7 +19,7 @@ const Article = {
         ];
 
         try {
-            const { rows } = await db.query(createQuery, values);
+            const { rows } = await database.query(createQuery, values);
             return res.status(201).send(rows[0]);
         } catch(error){
             return res.status(400).send(error);
@@ -28,17 +28,19 @@ const Article = {
     async getAllArticles(req, res) {
         const findAllArticles = 'SELECT * FROM articles returning *';
         try {
-            const { rows } = await config.query(findAllArticles);
+            const { rows } = await database.query(findAllArticles);
             return res.status(200).send({ rows });
         } catch(error) {
-            return res.status(400).send(error);
+            return res.status(400).send({
+                'message': 'A very costly error occurred'
+            });
         }
     }, 
     
     async getSpecificArticle(req, res) {
         const getOne = 'SELECT * FROM article WHERE id=$1 returning *';
         try {
-            const { rows } = await db.query(getOne, [req.params.id]);
+            const { rows } = await database.query(getOne, [req.params.id]);
             if(!rows[0]) {
                 return res.status(404).send({
                     'message': 'Oops article not found'
@@ -46,14 +48,16 @@ const Article = {
             }
             return res.status(200).send(rows[0]);
         } catch(error) {
-            return res.status(400).send(error);
+            return res.status(400).send({
+                'message': 'A costly error occured 2'
+            });
         }
     },
 
     async deleteArticle(req, res) {
         const deleteQuery = 'DELETE FROM article WHERE id=$1 returning *';
         try {
-            const { rows } = await db.query(deleteQuery, [req.params.id]);
+            const { rows } = await database.query(deleteQuery, [req.params.id]);
             if(!rows[0]) {
                 return res.status(404).send({
                     'message': 'Oops attempt to remove an article that does not exist'
@@ -63,7 +67,9 @@ const Article = {
                 'message': 'Article deleted'
             });
         } catch(error) {
-            return res.status(400).send(error);
+            return res.status(400).send({
+                'message': 'A costly error occured 3'
+            });
         }
     }, 
 
@@ -72,7 +78,7 @@ const Article = {
         const updateQuery = `UPDATE article
          SET title=$1, article=$2, image=$3, datePosted=$3 WHERE id=$4 returning *`;
          try {
-             const { rows } = await db.query(getOne, [req.params.id, req.user.id]);
+             const { rows } = await database.query(getOne, [req.params.id, req.user.id]);
              if(!rows[0]) {
                  return res.status(404).send({
                      'message': 'Article not found'
@@ -85,10 +91,12 @@ const Article = {
                  moment(new Date()),
                  req.params.id
              ];
-             const response =await db.query(updateQuery, values);
+             const response =await database.query(updateQuery, values);
              return res.status(201).status(response.rows[0]);
          } catch(error) {
-             return res.status(400).send(error);
+             return res.status(400).send({
+                 'message': 'A costly error occured 4'
+             });
          }
     },
 
@@ -97,7 +105,7 @@ const Article = {
         const commentQuery = `INSERT INTO comment(id, comment,article_id,user_id)
         VALUES($1,$2,$3,$) returning *`;
         try {
-            const { rows } = await db.query(getOne, [req.params.id, req.user.id]);
+            const { rows } = await database.query(getOne, [req.params.id, req.user.id]);
             if(!rows[0]) {
                 return res.status(404).send({
                     'message': 'Article not found'
@@ -111,12 +119,14 @@ const Article = {
                 req.user.id
             ];
 
-            const response = await db.query(commentQuery, values);
+            const response = await database.query(commentQuery, values);
             return res.status(201).send({
                 'message': 'Successfully added comment'
             });
         } catch(error) {
-            return res.status(400).send(error);
+            return res.status(400).send({
+                'message': 'A costly error occured 5'
+            });
         }
 
     }

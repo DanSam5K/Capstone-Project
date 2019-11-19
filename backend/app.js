@@ -3,12 +3,14 @@ const { pool } = require('./db/config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const dotenv = require('dotenv');
+const path = require('path');
+const Auth = require('./middleware/Auth');
+const articleRoutes = require('./routes/article');
+const gifRoutes = require('./routes/gif');
+const userRoutes = require('./routes/user');
 const app = express();
-const Article = require('./articles');
-
-
-
-
+dotenv.config();
 app.use(cors());
 
 app.use((req, res, next) => {
@@ -24,7 +26,14 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/api/v1/articles', Article.getAllArticles);
+app.use('/api/v1/articles', articleRoutes);
+app.use('/api/v1/gifs', gifRoutes);
+app.use('/api/auth', userRoutes);
+
+
+
+//routes for article
+
 
 //add new route to articles, that runs getArticles
 //app.get('/articles', Article.getArticles());

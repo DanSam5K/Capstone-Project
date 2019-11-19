@@ -1,6 +1,6 @@
-import moment from 'moment';
-import uuidv4 from 'uuid/v4';
-import db from '../db/config';
+const moment = require('moment');
+const uuidv4 = require('uuid/v4');
+const db = require('../db/config');
 
 const User = {
     async create(req, res) {
@@ -53,7 +53,7 @@ const User = {
       * Create Login
       */
 
-      async login(req, res) {
+      async signin(req, res) {
           if(!req.body.email || !req.body.password) {
               return res.status(400).send({
                   'message': 'Some values are missing'});
@@ -84,4 +84,4 @@ const User = {
       }
 }
 
-export default User;
+module.exports = User;
