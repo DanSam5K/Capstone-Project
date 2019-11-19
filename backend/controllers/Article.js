@@ -72,7 +72,7 @@ const Article = {
         const updateQuery = `UPDATE article
          SET title=$1, article=$2, image=$3, datePosted=$3 WHERE id=$4 returning *`;
          try {
-             const { rows } = await db.query(getOne, [req.params.id]);
+             const { rows } = await db.query(getOne, [req.params.id, req.user.id]);
              if(!rows[0]) {
                  return res.status(404).send({
                      'message': 'Article not found'
@@ -97,7 +97,7 @@ const Article = {
         const commentQuery = `INSERT INTO comment(id, comment,article_id,user_id)
         VALUES($1,$2,$3,$) returning *`;
         try {
-            const { rows } = await db.query(getOne, [req.params.id]);
+            const { rows } = await db.query(getOne, [req.params.id, req.user.id]);
             if(!rows[0]) {
                 return res.status(404).send({
                     'message': 'Article not found'
