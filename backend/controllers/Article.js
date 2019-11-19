@@ -65,6 +65,31 @@ const Article = {
         } catch(error) {
             return res.status(400).send(error);
         }
+    }, 
+
+    async updateArticle(req, res) {
+        const getOne = 'SELECT * FROM article WHERE id=$1';
+        const updateQuery = `UPDATE article
+         SET title=$1, article=$2, image=$3, datePosted=$3 WHERE id=$4 returning *`;
+         try {
+             const { rows } = await db.query(getOne, [req.params.id]);
+             if(!rows[0]) {
+                 return res.status(404).send({
+                     'message': 'Article not found'
+                 });
+             }
+             const values = [
+                 req.body.title || rows[0].title,
+                 req.body.article || rows[0].article,
+                 req.body.image || rowss[0].image,
+                 moment(new Date()),
+                 req.params.id
+             ];
+             const response =await db.query(updateQuery, values);
+             return res.status(201).status(response.rows[0]);
+         } catch(error) {
+             return res.status(400).send(error);
+         }
     }
     
 }
