@@ -1,13 +1,21 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const { pool } = require('./db/config')
+const http = require('http');
+const app = require('./app');
 
-const app = express()
+const normalizePort = val => {
+  const port = parseInt(val, 10);
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cors())
+  if(isNaN(port)) {
+    return val;
+  }
+  if(port >= 0) {
+    return port;
+  }
+
+  return false;
+};
+const port = normalizePort(process.env.PORT || 3000);
+app.set('port', port);
+
 
 const getArticles = (request, response) => {
   pool.query('SELECT * FROM articles', (error, results) => {
